@@ -49,7 +49,7 @@ jobs:
     - name: Trigger Webhook
       run: |
         # Replace the Ngrok URL with your actual Ngrok URL
-        $NGROK_URL = "https://9e0f-81-56-206-25.ngrok-free.app/ckbapp/github_webhook"
+        $NGROK_URL = "https://9e0f-81-56-206-25.ngrok-free.app/ckbapp/github_webhook/"
 
         # Construct payload using commit and pushed code details
         $PAYLOAD = @{

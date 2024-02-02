@@ -1,4 +1,4 @@
-# speriamo 
+# eddai oh 
 
 import hashlib
 import github

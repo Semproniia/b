@@ -52,7 +52,7 @@ class User:
 
         :return: The result of the complex operation.
         """
-        return 888
+        return 777
 
 def main():
     """

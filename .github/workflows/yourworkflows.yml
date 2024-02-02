@@ -32,30 +32,30 @@ jobs:
         $COMMIT_AUTHOR = git log --format="%an" -n 1 $env:GITHUB_SHA
         $COMMIT_URL = git log --format="%H" -n 1
 
-        echo "##vso[task.setvariable variable=message]$COMMIT_MESSAGE"
-        echo "##vso[task.setvariable variable=author]$COMMIT_AUTHOR"
-        echo "##vso[task.setvariable variable=url]$COMMIT_URL"
+        Write-Host "Commit Message: $COMMIT_MESSAGE"
+        Write-Host "Commit Author: $COMMIT_AUTHOR"
+        Write-Host "Commit URL: $COMMIT_URL"
 
     - name: Fetch pushed code
       id: fetch_code
       run: |
-        COMMIT_SHA=$(git log --format='%H' -n 1)
-        FILE_PATH="code_katas/code_kata.py"  # Adjust this to the actual file path in the repository
-        RAW_CONTENT_URL="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${COMMIT_SHA}/${FILE_PATH}"
-        PUSHED_CODE=$(curl -sSL $RAW_CONTENT_URL)
+        $COMMIT_SHA = (git log --format='%H' -n 1)
+        $FILE_PATH = "code_katas/code_kata.py"  # Adjust this to the actual file path in the repository
+        $RAW_CONTENT_URL = "https://raw.githubusercontent.com/${env:GITHUB_REPOSITORY}/${COMMIT_SHA}/${FILE_PATH}"
+        $PUSHED_CODE = (curl -sSL $RAW_CONTENT_URL)
 
         echo "::set-output name=pushed_code::$PUSHED_CODE"
 
     - name: Trigger Webhook
       run: |
         # Replace the Ngrok URL with your actual Ngrok URL
-        NGROK_URL="https://9e0f-81-56-206-25.ngrok-free.app/ckbapp/github_webhook"
+        $NGROK_URL = "https://9e0f-81-56-206-25.ngrok-free.app/ckbapp/github_webhook"
 
         # Construct payload using commit and pushed code details
         $PAYLOAD = @{
-          message = $env:COMMIT_MESSAGE
-          author = $env:COMMIT_AUTHOR
-          url = $env:COMMIT_URL
+          message = $COMMIT_MESSAGE
+          author = $COMMIT_AUTHOR
+          url = $COMMIT_URL
           pushed_code = $PUSHED_CODE
         } | ConvertTo-Json
 

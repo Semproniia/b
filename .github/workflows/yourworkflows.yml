@@ -1,23 +1,22 @@
-name: GitHub Webhook Trigger
+name: Invia a piattaforma amico
 
 on:
   push:
-    branches:
-      - main
+    paths:
+      - 'code_katas/code_kata.py'
 
 jobs:
-  trigger_webhook:
+  send-to-platform:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Trigger Webhook
-      run: |
-        $NGROK_URL = "https://9e0f-81-56-206-25.ngrok-free.app/ckbapp/github_webhook/"
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-        # Directly use the event payload without conversion
-        $WEBHOOK_PAYLOAD = Get-Content $env:GITHUB_EVENT_PATH
-
-        Write-Host "Webhook Payload: $WEBHOOK_PAYLOAD"
-
-        # Send the entire payload to the external platform
-        Invoke-RestMethod -Uri $NGROK_URL -Method Post -Body $WEBHOOK_PAYLOAD -ContentType "application/json"
+      - name: Invia richiesta POST alla piattaforma
+        run: |
+          curl -X POST -H "Content-Type: application/json" -d '{
+            "file_content": "$(cat code_kata.py)",
+            "committer_info": "${{ github.actor }}",
+            "commit_info": "${{ github.event.head_commit.message }}"
+          }' https://9e0f-81-56-206-25.ngrok-free.app/ckbapp/github_webhook/

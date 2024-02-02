@@ -3,7 +3,7 @@ name: Invia a piattaforma amico
 on:
   push:
     paths:
-      - 'code_katas/code_kata.py'
+      - 'code_kata.py'
 
 jobs:
   send-to-platform:
@@ -13,10 +13,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Leggi il contenuto del file
+        id: read-file
+        run: |
+          echo "::set-output name=file_content::$(cat code_kata.py)"
+
       - name: Invia richiesta POST alla piattaforma
         run: |
           curl -X POST -H "Content-Type: application/json" -d '{
-            "file_content": "$(cat code_kata.py)",
+            "file_content": "${{ steps.read-file.outputs.file_content }}",
             "committer_info": "${{ github.actor }}",
-            "commit_info": "${{ github.event.head_commit.message }}"
+            "commit_info": "${{ github.event.head_commit.message }}",
+            "additional_info": "Ulteriori informazioni qui..."
           }' https://9e0f-81-56-206-25.ngrok-free.app/ckbapp/github_webhook/

@@ -3,7 +3,7 @@ name: Invia a piattaforma amico
 on:
   push:
     paths:
-      - 'code_kata.py'
+      - 'code_katas/code_kata.py'
 
 jobs:
   send-to-platform:

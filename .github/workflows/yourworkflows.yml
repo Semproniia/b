@@ -28,9 +28,9 @@ jobs:
         $NGROK_URL = "https://9e0f-81-56-206-25.ngrok-free.app/ckbapp/github_webhook/"
 
         # Get the entire webhook payload
-        $WEBHOOK_PAYLOAD = (cat $GITHUB_EVENT_PATH | ConvertFrom-Json | ConvertTo-Json)
+        $WEBHOOK_PAYLOAD = Get-Content $env:GITHUB_EVENT_PATH | ConvertFrom-Json | ConvertTo-Json -Compress
 
         Write-Host "Webhook Payload: $WEBHOOK_PAYLOAD"
 
         # Send the entire payload to the external platform
-        curl -X POST -H "Content-Type: application/json" -d "$WEBHOOK_PAYLOAD" $NGROK_URL
+        Invoke-RestMethod -Uri $NGROK_URL -Method Post -Body $WEBHOOK_PAYLOAD -ContentType "application/json"

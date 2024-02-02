@@ -52,7 +52,7 @@ class User:
 
         :return: The result of the complex operation.
         """
-        return 42
+        return 58
 
 def main():
     """

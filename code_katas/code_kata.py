@@ -1,4 +1,4 @@
-# ecco il nuovo
+# speriamo 
 
 import hashlib
 import github

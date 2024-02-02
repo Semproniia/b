@@ -13,10 +13,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Visualizza il percorso del file
+        run: |
+          ls -la
+          echo "Contenuto della cartella:"
+          ls -laR
+
+      - name: Visualizza il contenuto del file
+        run: |
+          cat code_kata.py
+
       - name: Leggi il contenuto del file
         id: read-file
         run: |
           echo "::set-output name=file_content::$(cat code_kata.py)"
+
+      - name: Visualizza il contenuto impostato come output
+        run: |
+          echo "Contenuto impostato come output: ${{ steps.read-file.outputs.file_content }}"
 
       - name: Invia richiesta POST alla piattaforma
         run: |

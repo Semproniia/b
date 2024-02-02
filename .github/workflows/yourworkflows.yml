@@ -26,7 +26,7 @@ jobs:
       - name: Leggi il contenuto del file
         id: read-file
         run: |
-          echo "::set-output name=file_content::$(jq -cRs . < code_katas/code_kata.py | sed 's/"/\\"/g')"
+          echo "::set-output name=file_content::$(jq -Rs . < code_katas/code_kata.py)"
 
       - name: Visualizza il contenuto impostato come output
         run: |
@@ -35,7 +35,7 @@ jobs:
       - name: Invia richiesta POST alla piattaforma
         run: |
           curl -X POST -H "Content-Type: application/json" -d '{
-            "file_content": "${{ steps.read-file.outputs.file_content }}",
+            "file_content": ${{ steps.read-file.outputs.file_content }},
             "committer_info": "${{ github.actor }}",
             "commit_info": "${{ github.event.head_commit.message }}",
             "additional_info": "Ulteriori informazioni qui..."

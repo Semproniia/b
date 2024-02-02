@@ -1,6 +1,7 @@
 # adjusted_code.py
 
 import hashlib
+import github
 
 class User:
     """

@@ -40,18 +40,11 @@ jobs:
       id: fetch_code
       run: |
         $COMMIT_SHA = (git log --format='%H' -n 1)
-        $FILE_PATH = "codeKata3/b/code_katas/code_kata.py"  # Adjust this to the actual file path in the repository
+        $FILE_PATH = "https://github.com/Semproniia/b/code_katas/code_kata.py"  # Adjust this to the actual file path in the repository
         $RAW_CONTENT_URL = "https://raw.githubusercontent.com/${env:GITHUB_REPOSITORY}/${COMMIT_SHA}/${FILE_PATH}"
         $PUSHED_CODE = (curl -sSL $RAW_CONTENT_URL)
 
         echo "::set-output name=pushed_code::$PUSHED_CODE"
-
-    - name: Debug Payload Variables
-      run: |
-        Write-Host "Commit SHA: $COMMIT_SHA"
-        Write-Host "File Path: $FILE_PATH"
-        Write-Host "Raw Content URL: $RAW_CONTENT_URL"
-        Write-Host "Pushed Code: $PUSHED_CODE"
 
     - name: Trigger Webhook
       run: |
@@ -65,7 +58,5 @@ jobs:
           url = $COMMIT_URL
           pushed_code = $PUSHED_CODE
         } | ConvertTo-Json
-
-        Write-Host "Payload Content: $PAYLOAD"
 
         curl -X POST -H "Content-Type: application/json" -d $PAYLOAD $NGROK_URL

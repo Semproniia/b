@@ -26,7 +26,7 @@ jobs:
       - name: Leggi il contenuto del file
         id: read-file
         run: |
-          echo "::set-output name=file_content::$(jq -cRs . < code_katas/code_kata.py)"
+          echo "::set-output name=file_content::$(jq -cRs . < code_katas/code_kata.py | sed 's/"/\\"/g')"
 
       - name: Visualizza il contenuto impostato come output
         run: |

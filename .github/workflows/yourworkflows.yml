@@ -1,0 +1,56 @@
+name: GitHub Webhook Trigger
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  trigger_webhook:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests
+
+
+    - name: Get commit details
+      id: commit
+      run: |
+        COMMIT_MESSAGE=$(git log --format=%B -n 1 $GITHUB_SHA)
+        COMMIT_AUTHOR=$(git log --format='%an' -n 1 $GITHUB_SHA)
+        COMMIT_URL=$(git log --format='%H' -n 1)
+
+        echo "::set-output name=message::$COMMIT_MESSAGE"
+        echo "::set-output name=author::$COMMIT_AUTHOR"
+        echo "::set-output name=url::$COMMIT_URL"
+
+    - name: Fetch pushed code
+      id: fetch_code
+      run: |
+        COMMIT_SHA=$(git log --format='%H' -n 1)
+        FILE_PATH="code_katas/code_kata.py"  # Adjust this to the actual file path in the repository
+        RAW_CONTENT_URL="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${COMMIT_SHA}/${FILE_PATH}"
+        PUSHED_CODE=$(curl -sSL $RAW_CONTENT_URL)
+
+        echo "::set-output name=pushed_code::$PUSHED_CODE"
+
+    - name: Trigger Webhook
+      run: |
+        # Replace the Ngrok URL with your actual Ngrok URL
+        NGROK_URL="https://9e0f-81-56-206-25.ngrok-free.app/ckbapp/github_webhook"
+
+        # Construct payload using commit and pushed code details
+        PAYLOAD=$(jq -n --arg message "$COMMIT_MESSAGE" --arg author "$COMMIT_AUTHOR" --arg url "$COMMIT_URL" --arg pushed_code "$PUSHED_CODE" '{message: $message, author: $author, url: $url, pushed_code: $pushed_code}')
+        
+        curl -X POST -H "Content-Type: application/json" -d "$PAYLOAD" $NGROK_URL

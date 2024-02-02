@@ -1,4 +1,4 @@
-name: Construct Payload with Changed File
+name: GitHub Webhook Trigger
 
 on:
   push:
@@ -6,32 +6,58 @@ on:
       - main
 
 jobs:
-  construct-payload:
-    runs-on: ubuntu-latest
+  trigger_webhook:
+    runs-on: windows-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
+    - name: Set up Python
+      uses: actions/setup-python@v2
       with:
-        node-version: '14'
+        python-version: 3.8
 
     - name: Install dependencies
-      run: npm install
-
-    - name: Construct Payload
       run: |
-        # Get the changed file(s)
-        changed_file=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+        python -m pip install --upgrade pip
+        pip install requests
+        # Install jq for JSON processing
+        choco install jq
 
-        # Create a payload with the changed file(s)
-        payload="{\"changed_file\":\"$changed_file\"}"
+    - name: Get commit details
+      id: commit
+      run: |
+        $COMMIT_MESSAGE = git log --format="%B" -n 1 $env:GITHUB_SHA
+        $COMMIT_AUTHOR = git log --format="%an" -n 1 $env:GITHUB_SHA
+        $COMMIT_URL = git log --format="%H" -n 1
 
-        # Print the payload
-        echo "Constructed Payload: $payload"
+        Write-Host "Commit Message: $COMMIT_MESSAGE"
+        Write-Host "Commit Author: $COMMIT_AUTHOR"
+        Write-Host "Commit URL: $COMMIT_URL"
 
-        # Use the payload as needed, e.g., pass it to an external service or save it for later use
-      env:
-        CHANGED_FILE: $changed_file
+    - name: Fetch pushed code
+      id: fetch_code
+      run: |
+        $COMMIT_SHA = (git log --format='%H' -n 1)
+        $FILE_PATH = "codeKata3/b/code_katas/code_kata.py"  # Adjust this to the actual file path in the repository
+        $RAW_CONTENT_URL = "https://raw.githubusercontent.com/${env:GITHUB_REPOSITORY}/${COMMIT_SHA}/${FILE_PATH}"
+        $PUSHED_CODE = (curl -sSL $RAW_CONTENT_URL)
+
+        echo "::set-output name=pushed_code::$PUSHED_CODE"
+
+    - name: Trigger Webhook
+      run: |
+        # Replace the Ngrok URL with your actual Ngrok URL
+        $NGROK_URL = "https://9e0f-81-56-206-25.ngrok-free.app/ckbapp/github_webhook/"
+
+        # Construct payload using commit and pushed code details
+        $PAYLOAD = @{
+          message = $COMMIT_MESSAGE
+          author = $COMMIT_AUTHOR
+          url = $COMMIT_URL
+          pushed_code = $PUSHED_CODE
+        } | ConvertTo-Json
+
+        # Send payload to the webhook URL
+        Invoke-RestMethod -Uri $NGROK_URL -Method Post -Headers @{"Content-Type"="application/json"} -Body $PAYLOAD

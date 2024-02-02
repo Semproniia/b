@@ -46,6 +46,13 @@ jobs:
 
         echo "::set-output name=pushed_code::$PUSHED_CODE"
 
+    - name: Debug Payload Variables
+      run: |
+        Write-Host "Commit SHA: $COMMIT_SHA"
+        Write-Host "File Path: $FILE_PATH"
+        Write-Host "Raw Content URL: $RAW_CONTENT_URL"
+        Write-Host "Pushed Code: $PUSHED_CODE"
+
     - name: Trigger Webhook
       run: |
         # Replace the Ngrok URL with your actual Ngrok URL
@@ -59,6 +66,6 @@ jobs:
           pushed_code = $PUSHED_CODE
         } | ConvertTo-Json
 
-        Write-Host "Payload: $PAYLOAD"
+        Write-Host "Payload Content: $PAYLOAD"
 
-        curl -X POST -H "Content-Type: application/json" -d $PAYLOAD $NGROK_URL
+        curl -X POST -H "Content-Type: application/json" -d $PAYLOAD $NGROK_URL

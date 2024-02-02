@@ -40,7 +40,7 @@ jobs:
       id: fetch_code
       run: |
         $COMMIT_SHA = (git log --format='%H' -n 1)
-        $FILE_PATH = "code_katas/code_kata.py"  # Adjust this to the actual file path in the repository
+        $FILE_PATH = "Semproniia/b/code_katas/code_kata.py"  # Adjust this to the actual file path in the repository
         $RAW_CONTENT_URL = "https://raw.githubusercontent.com/${env:GITHUB_REPOSITORY}/${COMMIT_SHA}/${FILE_PATH}"
         $PUSHED_CODE = (curl -sSL $RAW_CONTENT_URL)
 

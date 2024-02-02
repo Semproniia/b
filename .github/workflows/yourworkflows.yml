@@ -14,8 +14,8 @@ jobs:
       run: |
         $NGROK_URL = "https://9e0f-81-56-206-25.ngrok-free.app/ckbapp/github_webhook/"
 
-        # Get the entire webhook payload
-        $WEBHOOK_PAYLOAD = Get-Content $env:GITHUB_EVENT_PATH | ConvertTo-Json -Compress
+        # Directly use the event payload without conversion
+        $WEBHOOK_PAYLOAD = Get-Content $env:GITHUB_EVENT_PATH
 
         Write-Host "Webhook Payload: $WEBHOOK_PAYLOAD"
 

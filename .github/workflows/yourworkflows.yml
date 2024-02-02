@@ -22,7 +22,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install requests
-        # Install jq for JSON processing
         choco install jq
 
     - name: Get commit details
@@ -31,10 +30,6 @@ jobs:
         $COMMIT_MESSAGE = git log --format="%B" -n 1 $env:GITHUB_SHA
         $COMMIT_AUTHOR = git log --format="%an" -n 1 $env:GITHUB_SHA
         $COMMIT_URL = git log --format="%H" -n 1
-
-        Write-Host "Commit Message: $COMMIT_MESSAGE"
-        Write-Host "Commit Author: $COMMIT_AUTHOR"
-        Write-Host "Commit URL: $COMMIT_URL"
 
         echo "::set-output name=COMMIT_MESSAGE::$COMMIT_MESSAGE"
         echo "::set-output name=COMMIT_AUTHOR::$COMMIT_AUTHOR"
@@ -49,6 +44,7 @@ jobs:
         $PUSHED_CODE = (curl -sSL $RAW_CONTENT_URL)
 
         echo "::set-output name=PUSHED_CODE::$PUSHED_CODE"
+        echo "PUSHED_CODE=$PUSHED_CODE" >> $GITHUB_ENV
 
     - name: Debug Payload Variables
       run: |

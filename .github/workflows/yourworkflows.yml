@@ -10,25 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.8
-
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install requests
-
     - name: Trigger Webhook
       run: |
         $NGROK_URL = "https://9e0f-81-56-206-25.ngrok-free.app/ckbapp/github_webhook/"
 
         # Get the entire webhook payload
-        $WEBHOOK_PAYLOAD = Get-Content $env:GITHUB_EVENT_PATH | ConvertFrom-Json | ConvertTo-Json -Compress
+        $WEBHOOK_PAYLOAD = Get-Content $env:GITHUB_EVENT_PATH | ConvertTo-Json -Compress
 
         Write-Host "Webhook Payload: $WEBHOOK_PAYLOAD"
 

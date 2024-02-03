@@ -1,3 +1,4 @@
+working one:
 name: Invia a piattaforma amico
 
 on:
@@ -25,12 +26,4 @@ jobs:
 
       - name: Invia richiesta POST alla piattaforma
         run: |
-          python3 -c 'import json,sys; content=sys.stdin.read(); print(json.dumps({
-            "file_content": content,
-            "committer_info": "'${{ github.actor }}'",
-            "commit_info": "'${{ github.event.head_commit.message }}'",
-            "committer_name": "'${{ github.event.head_commit.author.name }}'",
-            "committer_email": "'${{ github.event.head_commit.author.email }}'",
-            "repository_name": "'${{ github.repository }}'",
-            "additional_info": "Ulteriori informazioni qui..."
-          }))' < code_katas/code_kata.py | curl -X POST -H "Content-Type: application/json" -d @- https://9e0f-81-56-206-25.ngrok-free.app/ckbapp/github_webhook/
+          python3 -c 'import json,sys; content=sys.stdin.read(); print(json.dumps({"file_content": content, "committer_info": "'${{ github.actor }}'", "commit_info": "'${{ github.event.head_commit.message }}'", "additional_info": "Ulteriori informazioni qui..."}))' < code_katas/code_kata.py | curl -X POST -H "Content-Type: application/json" -d @- https://9e0f-81-56-206-25.ngrok-free.app/ckbapp/github_webhook/ 

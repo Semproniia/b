@@ -25,4 +25,4 @@ jobs:
 
       - name: Invia richiesta POST alla piattaforma
         run: |
-          python3 -c 'import json,sys; content=sys.stdin.read(); print(json.dumps({"file_content": content, "repository_name": "'${{ github.repository }}'"}))' < code_katas/code_kata.py | curl -X POST -H "Content-Type: application/json" -d @- https://9e0f-81-56-206-25.ngrok-free.app/ckbapp/github_webhook/
+          python3 -c 'import json,sys; content=sys.stdin.read(); print(json.dumps({"file_content": content, "repository_name": "'${{ github.event.repository.name }}'"}))' < code_katas/code_kata.py | curl -X POST -H "Content-Type: application/json" -d @- https://9e0f-81-56-206-25.ngrok-free.app/ckbapp/github_webhook/
